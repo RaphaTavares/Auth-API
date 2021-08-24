@@ -2,6 +2,12 @@ const User = require('../models/user');
 
 const user_create_post = (req, res) => {
 
+    try{
+        validaPayload(req);
+    } catch(err){
+        console.log(err)
+    };
+
     if(validaPayload(req)){
         const userModel = new User(req.body);
 
@@ -14,21 +20,29 @@ const user_create_post = (req, res) => {
     }
 
     
+    const throwError = (errorMessage) => {
+        throw new Error(errorMessage);
+    };
+    
 const validaPayload = (req) => {
-    const reqName = req.body.name;
-    const reqSurname = req.body.surname;
-    const reqEmail = req.body.email;
-    const reqUser = req.body.user;
-    //const { password } = req.body;
-    const regexName = new RegExp(/^[A-Za-z]+$/);
 
-    if(reqName.match(regexName))
+    const { name, surname, email, user, password } = req.body;
+    const regexName = new RegExp(/^[A-Za-z]+$/);
+    const regexPassword = new RegExp(/[A-Z]+[a-z]+[0-9]+[!@#$%^&*]/);
+    name.match(regexName) ?? throwError("Name must only contain letters")
     {
-        if(reqSurname.match(regexName)){
-            if(password.length >= 6){
-                return true;
+        surname.match(regexName) ?? throwError("Surname must only contain letters")
+        {
+            password.length > 8 ?? throwError("Password must be at least 8 characters long")
+            {
+                password.match(regexPassword) ?? throwError("Passowrd must contain at least 1 upper case and 1 lower case character, 1 number and 1 special character")
+                {
+                    return true;
+                }
             }
         }
+            
+        
     }
 }
 
