@@ -5,35 +5,30 @@ const throwError = require('../utils/error');
 const user_create_post = (req, res) => {
   try {
     //valida payload
-    if (validaPayload(req)) {
-        console.log("ola");
-      //creates hash password variables
-      const saltRounds = 10;
-      const myPass = req.body.password;
+    if (validatePayload(req)) {
+        
+        const saltRounds = 10;
+        const pass = req.body.password;
+        bcrypt.genSalt(saltRounds, (err, salt) => {
 
-      //hash password
-      bcrypt.genSalt(saltRounds, (err, salt) => {
-        bcrypt.hash(myPass, salt, (err, hash) => {
-          req.body.password = hash;
+            bcrypt.hash(pass, salt, (err, hash) => {
 
-          const userModel = new User(req.body);
-          console.log(userModel.name);
+                req.body.password = hash;
 
-          userModel.save()
-            .then(() => {
-              res.sendStatus(201);
+                const userModel = new User(req.body);
+
+                userModel.save()
+                    .then(() => { res.sendStatus(201); })
+                    .catch((err) => throwError(err));
             })
-            .catch((err) => console.log(err));
         });
-      });
     }
   } catch (err) {
     console.log(err);
   }
 };
 
-
-const validaPayload = (req) => {
+const validatePayload = (req) => {
   const { name, surname, email, user, password } = req.body;
   const regexName = new RegExp(/^[A-Za-z]+$/);
   const regexPassword = new RegExp(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,}$/);
