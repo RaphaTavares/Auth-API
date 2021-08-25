@@ -16,8 +16,4 @@ mongoose.connect(connectionString, { useNewUrlParser: true, useUnifiedTopology: 
     })
     .catch(err => console.log(err));
 
-// app.get('/user', (req, res) => {
-//     res.json({ ola: 'ola' });
-// })
-
 app.use('/user', userRoutes);
