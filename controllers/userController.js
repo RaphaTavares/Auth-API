@@ -35,8 +35,7 @@ const validatePayload = (req) => {
 
   name.match(regexName) ?? throwError("Name must only contain letters");
   surname.match(regexName) ?? throwError("Surname must only contain letters");
-  password.length > 8 ?? throwError("Password must be at least 8 characters long");
-  password.match(regexPassword) ??throwError("Passowrd must contain at least 1 upper case and 1 lower case character, 1 number and 1 special character");
+  password.match(regexPassword) ??throwError("Passowrd must contain at least 1 upper case, 1 lower case character, 1 number, 1 special character and be at least 8 characters long");
   return true;
 };
 
