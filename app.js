@@ -5,6 +5,7 @@ const { connectionString, port } = require('./config');
 const mongoose = require('mongoose');
 
 const userRoutes = require('./routes/user');
+const authRoutes = require('./routes/auth');
 
 app.use(bodyParser.json());
 
@@ -17,3 +18,5 @@ mongoose.connect(connectionString, { useNewUrlParser: true, useUnifiedTopology: 
     .catch(err => console.log(err));
 
 app.use('/user', userRoutes);
+
+app.use('/auth', authRoutes);
