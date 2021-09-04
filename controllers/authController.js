@@ -1,35 +1,35 @@
 const User = require('../models/user');
 const bcrypt = require('bcrypt');
+const maxAge = 3 * 24 * 60 * 60;
+const { jwtSecret } = require('../utils/config');
+const jwt = require('jsonwebtoken');
 
+const handleErrors = err => {
+    console.log(err.message, err.code);
+    let errors = { name: '', surname: '', email: '', user: '', password: ''}
+}
 
-const auth_post = (req, res) =>{
+const createToken = id => {
+    return jwt.sign({ id }, jwtSecret, {
+        expiresIn: maxAge
+    });
+}
+
+const signup_post = async (req, res) =>{
     try{
-        const saltRounds = 10;
-        const pass = req.body.password;
-        bcrypt.genSalt(saltRounds, (err, salt) =>{
-            
-            bcrypt.hash(pass, salt, (err, hash) =>{
 
-                req.body.password = hash;
-
-                // const userModel = new User(req.body);
-                const userUsername = req.body.user;
-                if(User.findOne({user: userUsername}, (err, user) => {
-                        console.log('found');
-                        res.sendStatus(200);
-                    }));
-            });
-        });
-
-        const userModel = new User(req)
-
+        const user = await User.create(req.body);
+        const token = createToken(user._id);
+        console.log("token:" + token);
+        res.status(201).json({jwt: token});
 
     } catch(err){
-        res.sendStatus(404);
-        console.log(err);
+        //const errors = handleErrors(err);
+        console.log("ERROR MESSAGE: " + err.message)
+        res.sendStatus(400);
     }
 };
 
 module.exports = {
-    auth_post
+    signup_post
 }
