@@ -18,7 +18,7 @@ const userSchema = new Schema({
         unique: true,
         validate: [isEmail, 'Please enter a valid email']
     },
-    user: {
+    username: {
         type: String,
         required: [true, 'Please enter a username'],
         unique: true
@@ -35,6 +35,19 @@ userSchema.pre('save', async function(next){
     this.password = await bcrypt.hash(this.password, salt);
     next();
 });
+
+userSchema.statics.login = async function(username, password)
+{
+    const user = await this.findOne({username});
+    if(user){
+        const auth = await bcrypt.compare(password, user.password);
+        if(auth){
+            return user;
+        }
+        throw Error('Incorrect password');
+    }
+    throw Error('Incorrect email');
+}
 
 const User = mongoose.model('User', userSchema);
 
