@@ -15,6 +15,21 @@ const createToken = id => {
     });
 }
 
+const login_post = async (req, res) =>{
+    const { username, password } = req.body;
+
+    try{
+        const user = await User.login(username, password);
+
+        const token = createToken(user._id);
+        res.status(200).json({jwt: token});
+    }
+    catch(err){
+        const errors = handleErrors(err);
+        res.status(400).json({errors})
+    }
+};
+
 const signup_post = async (req, res) =>{
     try{
 
@@ -31,5 +46,6 @@ const signup_post = async (req, res) =>{
 };
 
 module.exports = {
-    signup_post
+    signup_post,
+    login_post
 }
