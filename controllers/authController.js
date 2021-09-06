@@ -1,6 +1,4 @@
 const User = require('../models/user');
-const bcrypt = require('bcrypt');
-const maxAge = 3 * 24 * 60 * 60;
 const { jwtSecret } = require('../utils/config');
 const jwt = require('jsonwebtoken');
 
@@ -11,7 +9,7 @@ const handleErrors = err => {
 
 const createToken = id => {
     return jwt.sign({ id }, jwtSecret, {
-        expiresIn: maxAge
+        expiresIn: '2h'
     });
 }
 
@@ -25,8 +23,8 @@ const login_post = async (req, res) =>{
         res.status(200).json({jwt: token});
     }
     catch(err){
-        const errors = handleErrors(err);
-        res.status(400).json({errors})
+        // const errors = handleErrors(err);
+        res.status(400).json({error: err.message})
     }
 };
 
@@ -41,7 +39,7 @@ const signup_post = async (req, res) =>{
     } catch(err){
         //const errors = handleErrors(err);
         console.log("ERROR MESSAGE: " + err.message)
-        res.sendStatus(400);
+        res.sendStatus(400).json({err: err.message});
     }
 };
 
